@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>MCA Lead Finder</title>
+<meta charset="UTF-8">
+<style>
+body { font-family: Arial; background:#0b1628; color:#fff; padding:30px; }
+input, button { padding:10px; margin:5px; border-radius:5px; border:none; }
+button { background:#ffd166; cursor:pointer; }
+.lead { background:#132542; padding:10px; margin:10px 0; border-radius:5px; }
+</style>
+</head>
+<body>
+<h1>Free MCA Lead Finder</h1>
+<p>Enter industry + location to find businesses that may need funding.</p>
+
+<input id="industry" placeholder="Restaurant, trucking, retail..." size="40">
+<input id="location" placeholder="City or State" size="30">
+<button onclick="search()">Search</button>
+
+<div id="results"></div>
+
+<script>
+async function search() {
+  const industry = document.getElementById("industry").value;
+  const location = document.getElementById("location").value;
+  document.getElementById("results").innerHTML = "Searching...";
+
+  const res = await fetch(`/api/leads?industry=${industry}&location=${location}`);
+  const data = await res.json();
+
+  document.getElementById("results").innerHTML = data.leads.map(l=>`
+    <div class="lead">
+      <b>${l.name}</b><br>
+      ${l.address}<br>
+      Website: <a href="${l.website}" target="_blank">${l.website}</a>
+      ${l.email ? `<br>Email: ${l.email}` : ""}
+      ${l.phone ? `<br>Phone: ${l.phone}` : ""}
+    </div>
+  `).join("");
+}
+</script>
+</body>
+</html>
